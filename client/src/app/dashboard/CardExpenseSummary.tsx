@@ -5,7 +5,7 @@ import {
 import { TrendingUp } from "lucide-react";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
-type ExpensesSums = {
+type ExpenseSums = {
   [category: string]: number;
 };
 
@@ -14,13 +14,13 @@ const colors = ["#00C49F", "#0088FE", "#FFBB28"];
 const CardExpenseSummary = () => {
   const { data: dashboardMetrics, isLoading } = useGetDashboardMetricsQuery();
 
-  const expenseSummmary = dashboardMetrics?.expenseSummary[0];
+  const expenseSummary = dashboardMetrics?.expenseSummary[0];
 
   const expenseByCategorySummary =
     dashboardMetrics?.expenseByCategorySummary || [];
 
-  const expensesSums = expenseByCategorySummary.reduce(
-    (acc: ExpensesSums, item: ExpenseByCategorySummary) => {
+  const expenseSums = expenseByCategorySummary.reduce(
+    (acc: ExpenseSums, item: ExpenseByCategorySummary) => {
       const category = item.category + " Expenses";
       const amount = parseInt(item.amount, 10);
       if (!acc[category]) acc[category] = 0;
@@ -30,15 +30,17 @@ const CardExpenseSummary = () => {
     {}
   );
 
-  const expenseCategories = Object.entries(expensesSums).map(
-    ([name, value]) => ({ name, value })
+  const expenseCategories = Object.entries(expenseSums).map(
+    ([name, value]) => ({
+      name,
+      value,
+    })
   );
 
   const totalExpenses = expenseCategories.reduce(
     (acc, category: { value: number }) => acc + category.value,
     0
   );
-
   const formattedTotalExpenses = totalExpenses.toFixed(2);
 
   return (
@@ -52,17 +54,18 @@ const CardExpenseSummary = () => {
             <h2 className="text-lg font-semibold mb-2 px-7 pt-5">
               Expense Summary
             </h2>
+            <hr />
           </div>
-
           {/* BODY */}
           <div className="xl:flex justify-between pr-7">
+            {/* CHART */}
             <div className="relative basis-3/5">
-              <ResponsiveContainer width="100%" height={140}>
+              <ResponsiveContainer width="100%" height={120}>
                 <PieChart>
                   <Pie
                     data={expenseCategories}
-                    innerRadius={50}
-                    outerRadius={60}
+                    innerRadius={40}
+                    outerRadius={50}
                     fill="#8884d8"
                     dataKey="value"
                     nameKey="name"
@@ -78,7 +81,6 @@ const CardExpenseSummary = () => {
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
-
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center basis-2/5">
                 <span className="font-bold text-xl">
                   ${formattedTotalExpenses}
@@ -95,7 +97,7 @@ const CardExpenseSummary = () => {
                   <span
                     className="mr-2 w-3 h-3 rounded-full"
                     style={{ backgroundColor: colors[index % colors.length] }}
-                  />
+                  ></span>
                   {entry.name}
                 </li>
               ))}
@@ -104,18 +106,19 @@ const CardExpenseSummary = () => {
           {/* FOOTER */}
           <div>
             <hr />
-            {expenseSummmary && (
-              <div className="mt-3 flex justify-between items-center px-7 mb-4">
+            {expenseSummary && (
+              <div className="flex justify-between items-center px-7 mb-4">
                 <div className="pt-2">
                   <p className="text-sm">
-                    Average: {""}
+                    Average:{" "}
                     <span className="font-semibold">
-                      ${expenseSummmary.totalExpenses.toFixed(2)}
+                      ${expenseSummary.totalExpenses.toFixed(2)}
                     </span>
                   </p>
                 </div>
                 <span className="flex items-center mt-2">
-                  <TrendingUp className="mr-2 text-green-500">30%</TrendingUp>
+                  <TrendingUp className="mr-2 text-green-500" />
+                  30%
                 </span>
               </div>
             )}

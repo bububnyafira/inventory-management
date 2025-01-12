@@ -7,6 +7,7 @@ import morgan from "morgan";
 import dashboardRoutes from "./routes/dashboardRoutes";
 import productRoutes from "./routes/productRoutes";
 import userRoutes from "./routes/userRoutes";
+import expenseRoutes from "./routes/expenseRoutes";
 
 dotenv.config();
 const app = express();
@@ -18,13 +19,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
-app.use("/dashboard", dashboardRoutes);
-app.use("/products", productRoutes);
-app.use("/users", userRoutes);
-
-app.get("/hello", (req, res) => {
-    res.send("Hello World!");
-});
+app.use("/dashboard", dashboardRoutes); // http://localhost:8000/dashboard
+app.use("/products", productRoutes); // http://localhost:8000/products
+app.use("/users", userRoutes); // http://localhost:8000/users
+app.use("/expenses", expenseRoutes); // http://localhost:8000/expenses
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
